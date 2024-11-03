@@ -1,5 +1,6 @@
 #include "NeuralNetwork.h"
 
+#include <algorithm>
 #include <iostream>
 
 namespace learn {
