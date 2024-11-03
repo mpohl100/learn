@@ -2,11 +2,11 @@ from conan import ConanFile
 from conan.tools.cmake import CMake, CMakeToolchain, CMakeDeps, cmake_layout
 
 class ParallelConan(ConanFile):
-    name = "ParallelProject"
+    name = "LearnProject"
     version = "1.0.0"
     license = "Apache License v2.0"
     author = "Michael Pohl"
-    description = "A default project for a C++ application which has a library for parallelization"
+    description = "An exploratory project for a C++ application which has a library for neural networks"
     topics = ()
     settings = "os", "compiler", "build_type", "arch"
     requires = [

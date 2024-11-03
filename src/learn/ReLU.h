@@ -18,12 +18,14 @@ public:
 
   std::vector<double>
   backward(const std::vector<double> &grad_output) override {
-    std::vector<double> grad_input(input_cache.size());
+    std::vector<double> grad_input(grad_output.size());
 
-    for (size_t i = 0; i < input_cache.size(); ++i) {
-      // Gradient is passed through if input_cache[i] > 0; otherwise, it is
-      // zeroed out
-      grad_input[i] = input_cache[i] > 0 ? grad_output[i] : 0.0;
+    for (size_t i = 0; i < grad_output.size(); ++i) {
+      // Calculate sigmoid(x) for the current input element
+      double sigmoid_x = 1.0 / (1.0 + std::exp(-grad_output[i]));
+      // Sigmoid derivative: sigmoid(x) * (1 - sigmoid(x))
+      double sigmoid_derivative = sigmoid_x * (1.0 - sigmoid_x);
+      grad_input[i] = grad_output[i] * sigmoid_derivative;
     }
 
     return grad_input;
