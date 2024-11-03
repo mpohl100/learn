@@ -1,0 +1,33 @@
+name: Check Formatting
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Build and check formatting
+      uses: devcontainers/ci@v0.3
+      with:
+        runCmd: |
+          # Compile with formatting flags
+
+          conan profile detect
+          mkdir -p build
+          cd build
+
+          conan build .. --options formatting=True -b="missing" -pr:b="$(pwd)/../conan_profiles/gcc11_cpp20_debug.prof" -pr:h="$(pwd)/../conan_profiles/gcc11_cpp20_debug.prof" -s build_type=Debug -c tools.system.package_manager:mode=install -c tools.system.package_manager:sudo=True
+
+          cd Debug
+          make check_format
+
