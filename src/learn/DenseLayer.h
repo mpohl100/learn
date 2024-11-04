@@ -15,6 +15,8 @@ public:
   std::vector<double> forward(const std::vector<double> &input) override;
   std::vector<double> backward(const std::vector<double> &grad_output) override;
   void updateWeights(double learning_rate) override;
+  size_t input_size() const override;
+  size_t output_size() const override;
 
 private:
   matrix::Matrix<double> weights;

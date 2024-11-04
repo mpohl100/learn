@@ -19,6 +19,9 @@ public:
              const std::vector<std::vector<double>> &targets,
              double learning_rate, int epochs);
   int predict(const std::vector<double> &input);
+
+  size_t input_size() const;
+  size_t output_size() const;
 private:
   std::vector<std::unique_ptr<Layer>> layers;
   std::vector<std::unique_ptr<Activation>> activations;

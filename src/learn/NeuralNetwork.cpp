@@ -2,6 +2,7 @@
 
 #include <algorithm>
 #include <iostream>
+#include <stdexcept>
 
 namespace learn {
 
@@ -76,5 +77,20 @@ int NeuralNetwork::predict(const std::vector<double> &input) {
 
   return predicted_class;
 }
+
+
+  size_t NeuralNetwork::input_size() const
+  {
+    return layers[0]->input_size();
+  }
+
+  size_t NeuralNetwork::output_size() const
+  {
+    if(layers.empty())
+    {
+      throw std::runtime_error("No layers in the network");
+    }
+    return layers.back()->output_size();
+  }
 
 } // namespace learn

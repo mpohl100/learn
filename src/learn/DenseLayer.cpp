@@ -69,4 +69,8 @@ void DenseLayer::updateWeights(double learning_rate) {
   }
 }
 
+size_t DenseLayer::input_size() const { return weights.cols(); }
+
+size_t DenseLayer::output_size() const { return weights.rows(); }
+
 } // namespace learn
