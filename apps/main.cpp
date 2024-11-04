@@ -1,5 +1,6 @@
-#include <clara.hpp>
+#include "learn/TrainingSession.h"
 
+#include <clara.hpp>
 #include <iostream>
 
 int main(int argc, char **argv) {
@@ -20,5 +21,8 @@ int main(int argc, char **argv) {
   }
 
   std::cout << "Hello, " << name << "!\n";
+
+  const auto training_session = learn::TrainingSession{};
+  training_session.train();
   return 0;
 }
