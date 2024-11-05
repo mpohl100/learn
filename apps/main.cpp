@@ -44,6 +44,7 @@ int main(int argc, char **argv) {
   std::cout << "Hello, " << name << "!\n";
 
   const auto training_session = DumbTrainingSession{};
-  training_session.train();
+  auto success_rate = training_session.train();
+  std::cout << "Success rate: " << success_rate << '\n';
   return 0;
 }

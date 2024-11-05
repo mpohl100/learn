@@ -12,6 +12,7 @@ struct TrainingParams {
   int num_verification_samples = 300;
   double learning_rate = 0.01;
   int epochs = 10;
+  double tolerance = 0.1;
 };
 
 class TrainingSession {
@@ -32,7 +33,7 @@ public:
 
   virtual SessionData prepare_data() const = 0;
   learn::NeuralNetwork prepare_network() const;
-  void train() const;
+  double train() const;
 
 private:
   TrainingParams _params;
