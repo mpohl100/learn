@@ -35,6 +35,8 @@ learn::NeuralNetwork TrainingSession::prepare_network() const {
 
   // Add layers and activations using the new addActivationAndLayer method
   nn.addActivationAndLayer(std::make_unique<learn::ReLU>(),
+                           std::make_unique<learn::DenseLayer>(784, 784));
+  nn.addActivationAndLayer(std::make_unique<learn::ReLU>(),
                            std::make_unique<learn::DenseLayer>(784, 128));
   nn.addActivationAndLayer(std::make_unique<learn::Sigmoid>(),
                            std::make_unique<learn::DenseLayer>(128, 10));
@@ -42,7 +44,7 @@ learn::NeuralNetwork TrainingSession::prepare_network() const {
   return nn;
 }
 
-void TrainingSession::train() const {
+double TrainingSession::train() const {
   const auto [inputs, targets] = prepare_data();
   std::vector<std::vector<double>> training_inputs;
   std::vector<std::vector<double>> training_targets;
@@ -72,12 +74,20 @@ void TrainingSession::train() const {
   nn.train(training_inputs, training_targets, _params.learning_rate,
            _params.epochs); // Train for 10 epochs with learning rate 0.01
 
-  // Classify a sample input (all zeros in this case)
-  std::vector<double> sample_input(input_size, 0.0); // Use an example input
-  int predicted_class = nn.predict(sample_input);
-
-  std::cout << "Predicted class for the sample input: " << predicted_class
-            << std::endl;
+  // Use the trained neural network to predict the output for an example input
+  size_t success_count = 0;
+  for(size_t i = 0; i < _params.num_verification_samples; ++i) {
+    if(_params.num_training_samples + i >= inputs.size()) {
+      throw std::runtime_error("Not enough verification samples");
+    }
+    auto output = nn.predict(inputs[_params.num_training_samples + i]);
+    auto target = targets[_params.num_training_samples + i];
+    // Check if the output matches the target
+    if(std::equal(output.begin(), output.end(), target.begin(), [this](double out, double t) { return std::abs(out - t) < _params.tolerance;  })) {
+      success_count++;
+    } 
+  }
+  return success_count / static_cast<double>(_params.num_verification_samples);
 }
 
 } // namespace learn

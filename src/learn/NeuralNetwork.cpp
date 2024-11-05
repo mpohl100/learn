@@ -68,29 +68,17 @@ void NeuralNetwork::train(const std::vector<std::vector<double>> &inputs,
 }
 
 // New predict method to classify an input and return the predicted class
-int NeuralNetwork::predict(const std::vector<double> &input) {
-  std::vector<double> output = forward(input);
-
-  // Find the index of the maximum element in the output vector
-  auto max_it = std::max_element(output.begin(), output.end());
-  int predicted_class = std::distance(output.begin(), max_it);
-
-  return predicted_class;
+std::vector<double> NeuralNetwork::predict(const std::vector<double> &input) {
+  return forward(input);
 }
 
+size_t NeuralNetwork::input_size() const { return layers[0]->input_size(); }
 
-  size_t NeuralNetwork::input_size() const
-  {
-    return layers[0]->input_size();
+size_t NeuralNetwork::output_size() const {
+  if (layers.empty()) {
+    throw std::runtime_error("No layers in the network");
   }
-
-  size_t NeuralNetwork::output_size() const
-  {
-    if(layers.empty())
-    {
-      throw std::runtime_error("No layers in the network");
-    }
-    return layers.back()->output_size();
-  }
+  return layers.back()->output_size();
+}
 
 } // namespace learn

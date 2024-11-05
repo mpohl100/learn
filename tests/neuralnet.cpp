@@ -42,12 +42,14 @@ TEST_CASE("NeuralNet", "[neuralnet]") {
 
     // Classify a sample input (all zeros in this case)
     std::vector<double> sample_input(input_size, 0.0); // Use an example input
-    int predicted_class = nn.predict(sample_input);
+    const auto output = nn.predict(sample_input);
 
-    std::cout << "Predicted class for the sample input: " << predicted_class
-              << std::endl;
+    std::cout << "Output: ";
+    for (auto &val : output) {
+      std::cout << val << " ";
+    }
 
-    CHECK(predicted_class >= 0); // Check if the prediction is in the range
+    CHECK(output.size() >= 0); // Check if the prediction is in the range
   }
 }
 

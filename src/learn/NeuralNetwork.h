@@ -18,7 +18,7 @@ public:
   void train(const std::vector<std::vector<double>> &inputs,
              const std::vector<std::vector<double>> &targets,
              double learning_rate, int epochs);
-  int predict(const std::vector<double> &input);
+  std::vector<double> predict(const std::vector<double> &input);
 
   size_t input_size() const;
   size_t output_size() const;
