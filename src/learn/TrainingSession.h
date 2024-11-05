@@ -8,10 +8,10 @@
 namespace learn {
 
 struct TrainingParams {
-  int num_training_samples;
-  int num_verification_samples;
-  double learning_rate;
-  int epochs;
+  int num_training_samples = 700;
+  int num_verification_samples = 300;
+  double learning_rate = 0.01;
+  int epochs = 10;
 };
 
 class TrainingSession {
