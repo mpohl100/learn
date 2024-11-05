@@ -76,16 +76,19 @@ double TrainingSession::train() const {
 
   // Use the trained neural network to predict the output for an example input
   size_t success_count = 0;
-  for(size_t i = 0; i < _params.num_verification_samples; ++i) {
-    if(_params.num_training_samples + i >= inputs.size()) {
+  for (size_t i = 0; i < _params.num_verification_samples; ++i) {
+    if (_params.num_training_samples + i >= inputs.size()) {
       throw std::runtime_error("Not enough verification samples");
     }
     auto output = nn.predict(inputs[_params.num_training_samples + i]);
     auto target = targets[_params.num_training_samples + i];
     // Check if the output matches the target
-    if(std::equal(output.begin(), output.end(), target.begin(), [this](double out, double t) { return std::abs(out - t) < _params.tolerance;  })) {
+    if (std::equal(output.begin(), output.end(), target.begin(),
+                   [this](double out, double t) {
+                     return std::abs(out - t) < _params.tolerance;
+                   })) {
       success_count++;
-    } 
+    }
   }
   return success_count / static_cast<double>(_params.num_verification_samples);
 }
