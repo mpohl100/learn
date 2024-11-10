@@ -4,21 +4,19 @@
 #include "learn/NeuralNetwork.h"
 #include "learn/ReLU.h"
 #include "learn/Sigmoid.h"
+#include "learn/TrainingSession.h"
 
 #include <iostream>
 
 namespace {
 
-TEST_CASE("NeuralNet", "[neuralnet]") {
-  SECTION("SimpleNeuralNetWorks") {
-    learn::NeuralNetwork nn;
+struct DumbTrainingSession : learn::TrainingSession {
+  virtual ~DumbTrainingSession() = default;
 
-    // Add layers and activations using the new addActivationAndLayer method
-    nn.addActivationAndLayer(std::make_unique<learn::ReLU>(),
-                             std::make_unique<learn::DenseLayer>(784, 128));
-    nn.addActivationAndLayer(std::make_unique<learn::Sigmoid>(),
-                             std::make_unique<learn::DenseLayer>(128, 10));
+  DumbTrainingSession(const learn::TrainingParams &params)
+      : learn::TrainingSession{params}, _params{params} {}
 
+  learn::TrainingSession::SessionData prepare_data() const override {
     // Initialize inputs and targets with zeros
     int num_samples = 1000; // Number of training samples
     int input_size = 784;   // Input dimension (e.g., 28x28 image flattened)
@@ -30,26 +28,28 @@ TEST_CASE("NeuralNet", "[neuralnet]") {
     std::vector<std::vector<double>> targets(
         num_samples, std::vector<double>(num_classes, 0.0));
 
-    // Display dimensions to confirm
-    std::cout << "Inputs: " << inputs.size() << " x " << inputs[0].size()
-              << std::endl;
-    std::cout << "Targets: " << targets.size() << " x " << targets[0].size()
-              << std::endl;
+    return {inputs, targets};
+  }
 
-    // Train the neural network
-    nn.train(inputs, targets, 0.01,
-             10); // Train for 10 epochs with learning rate 0.01
+private:
+  learn::TrainingParams _params;
+};
 
-    // Classify a sample input (all zeros in this case)
-    std::vector<double> sample_input(input_size, 0.0); // Use an example input
-    const auto output = nn.predict(sample_input);
+TEST_CASE("NeuralNet", "[neuralnet]") {
+  SECTION("SimpleNeuralNetWorks") {
 
-    std::cout << "Output: ";
-    for (auto &val : output) {
-      std::cout << val << " ";
-    }
+    const auto nn_shape = learn::NeuralNetworkShape{{
+        {784, 784, learn::LayerType::Dense, learn::ActivationType::ReLU},
+        {784, 128, learn::LayerType::Dense, learn::ActivationType::ReLU},
+        {128, 10, learn::LayerType::Dense, learn::ActivationType::Sigmoid},
+    }};
 
-    CHECK(output.size() >= 0); // Check if the prediction is in the range
+    const auto training_params =
+        learn::TrainingParams{nn_shape, 700, 300, 0.01, 10, 0.1};
+
+    const auto training_session = DumbTrainingSession{training_params};
+    auto success_rate = training_session.train();
+    CHECK(success_rate >= 0.9);
   }
 }
 

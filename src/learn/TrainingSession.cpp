@@ -28,20 +28,13 @@ TrainingSession::TrainingSession(const TrainingParams &params)
   if (params.epochs <= 0) {
     throw std::invalid_argument("Number of epochs must be positive");
   }
+  if(!_params.shape.is_valid()) {
+    throw std::invalid_argument("Invalid neural network shape");
+  }
 }
 
 learn::NeuralNetwork TrainingSession::prepare_network() const {
-  learn::NeuralNetwork nn;
-
-  // Add layers and activations using the new addActivationAndLayer method
-  nn.addActivationAndLayer(std::make_unique<learn::ReLU>(),
-                           std::make_unique<learn::DenseLayer>(784, 784));
-  nn.addActivationAndLayer(std::make_unique<learn::ReLU>(),
-                           std::make_unique<learn::DenseLayer>(784, 128));
-  nn.addActivationAndLayer(std::make_unique<learn::Sigmoid>(),
-                           std::make_unique<learn::DenseLayer>(128, 10));
-
-  return nn;
+  return NeuralNetwork(_params.shape);
 }
 
 double TrainingSession::train() const {

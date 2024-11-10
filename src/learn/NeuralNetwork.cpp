@@ -1,10 +1,47 @@
 #include "NeuralNetwork.h"
+#include "NeuralNetworkParams.h"
+#include "Activation.h"
+#include "DenseLayer.h"
+#include "ReLU.h"
+#include "Sigmoid.h"
 
 #include <algorithm>
 #include <iostream>
 #include <stdexcept>
 
 namespace learn {
+
+NeuralNetwork::NeuralNetwork(const NeuralNetworkShape& shape)
+: _shape{shape} {
+  if (!_shape.is_valid()) {
+    throw std::invalid_argument("Invalid neural network shape");
+  }
+
+  for (const auto& layer_shape : _shape.layers) {
+    std::unique_ptr<Activation> activation;
+    std::unique_ptr<Layer> layer;
+
+    switch (layer_shape.activation) {
+      case ActivationType::ReLU:
+        activation = std::make_unique<ReLU>();
+        break;
+      case ActivationType::Sigmoid:
+        activation = std::make_unique<Sigmoid>();
+        break;
+    }
+
+    switch (layer_shape.type) {
+      case LayerType::Dense:
+        layer = std::make_unique<DenseLayer>(layer_shape.input_size,
+                                             layer_shape.output_size);
+        break;
+    }
+
+    addActivationAndLayer(std::move(activation), std::move(layer));
+  }
+}
+
+
 
 // Adds a layer and its corresponding activation function to the network
 void NeuralNetwork::addActivationAndLayer(

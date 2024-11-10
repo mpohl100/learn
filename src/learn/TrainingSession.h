@@ -1,6 +1,7 @@
 #pragma once
 
 #include "NeuralNetwork.h"
+#include "NeuralNetworkParams.h"
 
 #include <stdexcept>
 #include <vector>
@@ -8,6 +9,7 @@
 namespace learn {
 
 struct TrainingParams {
+  NeuralNetworkShape shape;
   int num_training_samples = 700;
   int num_verification_samples = 300;
   double learning_rate = 0.01;
